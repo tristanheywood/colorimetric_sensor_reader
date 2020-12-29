@@ -131,11 +131,30 @@ app.on('activate', () => {
   if (mainWindow === null) createWindow();
 });
 
-// app.on('ready', () => {
+app.on('ready', () => {
 
-//   console.log("Starting Python server process")
-//   var subpy = require('child_process').spawn('python', ['./src/sotcat_backend/server.py'])
-//   subpy.stdout.on('data', (data: any) => {
-//     console.log(data.toString());
-//   });
-// })
+  let fullPath = path.join(__dirname, '..',  'sotcat_backend_dist');
+  console.log("Looking for packaged backend at: ", fullPath);
+  let backendIsPackaged = require('fs').existsSync(fullPath);
+
+  if (!backendIsPackaged) {
+    console.log("No packaged backend detected, attempting to run python backend server");
+
+    var subpy = require('child_process').spawn('python', ['./src/sotcat_backend/server.py'])
+
+    subpy.stdout.on('data', (data: any) => {
+      console.log(data.toString());
+    });
+
+  } else {
+    console.log("Running packaged backend server");
+
+    let scriptPath = path.join(__dirname, 'sotcat_backend_dist/server/server.exe', )
+    let subpy = require('child_process').execFile(scriptPath);
+
+    subpy.stdout.on('data', (data: any) => {
+      console.log(data.toString());
+    });
+  }
+
+})
