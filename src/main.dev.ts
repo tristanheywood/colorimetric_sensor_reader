@@ -131,10 +131,11 @@ app.on('activate', () => {
   if (mainWindow === null) createWindow();
 });
 
-app.on('ready', () => {
-  console.log("Starting Python server process")
-  var subpy = require('child_process').spawn('python', ['./src/sotcat_backend/server.py'])
-  subpy.stdout.on('data', (data: any) => {
-    console.log(data.toString());
-  });
-})
+// app.on('ready', () => {
+
+//   console.log("Starting Python server process")
+//   var subpy = require('child_process').spawn('python', ['./src/sotcat_backend/server.py'])
+//   subpy.stdout.on('data', (data: any) => {
+//     console.log(data.toString());
+//   });
+// })
