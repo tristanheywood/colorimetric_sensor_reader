@@ -130,3 +130,11 @@ app.on('activate', () => {
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
 });
+
+// app.on('ready', () => {
+//   console.log("Starting Python server process")
+//   var subpy = require('child_process').spawn('python', ['./sotcat_backend/server.py'])
+//   subpy.stdout.on('data', (data: any) => {
+//     console.log(data.toString());
+//   })
+// })

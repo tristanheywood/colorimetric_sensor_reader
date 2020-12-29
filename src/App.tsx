@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import icon from '../assets/icon.svg';
-import Sotcat from './sotcat/Sotcat';
+import Sotcat from './sotcat_frontend/Sotcat';
 
 const Hello = () => {
   return (
