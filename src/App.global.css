@@ -5,9 +5,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
 
 body {
-  position: relative;
+  /* position: relative; */
   color: white;
-  height: 100vh;
+  /* height: 100vh; */
   background: linear-gradient(
     200.96deg,
     #fedc2a -29.09%,
@@ -15,7 +15,7 @@ body {
     #7a2c9e 129.35%
   );
   font-family: 'Noto Sans JP', sans-serif;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
   display: flex;
   justify-content: center;
   align-items: center;
