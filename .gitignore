@@ -51,3 +51,5 @@ npm-debug.log.*
 
 sotcat_backend_dist/*
 __pycache__/
+build
+server.spec

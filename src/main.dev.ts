@@ -133,9 +133,12 @@ app.on('activate', () => {
 
 app.on('ready', () => {
 
-  let fullPath = path.join(__dirname, '..',  'sotcat_backend_dist');
-  console.log("Looking for packaged backend at: ", fullPath);
-  let backendIsPackaged = require('fs').existsSync(fullPath);
+  let backendDistPath = process.env.NODE_ENV === 'production' ?
+  path.join(process.resourcesPath, 'sotcat_backend_dist') : path.join(__dirname, '..', 'sotcat_backend_dist');
+
+  // let fullPath = path.join(__dirname, '..',  'sotcat_backend_dist');
+  console.log("Looking for packaged backend at: ", backendDistPath);
+  let backendIsPackaged = require('fs').existsSync(backendDistPath);
 
   if (!backendIsPackaged) {
     console.log("No packaged backend detected, attempting to run python backend server");
@@ -149,7 +152,8 @@ app.on('ready', () => {
   } else {
     console.log("Running packaged backend server");
 
-    let scriptPath = path.join(__dirname, 'sotcat_backend_dist/server/server.exe', )
+    let scriptPath = path.join(backendDistPath, 'server', 'server.exe');
+    console.log('Executing script: ', scriptPath);
     let subpy = require('child_process').execFile(scriptPath);
 
     subpy.stdout.on('data', (data: any) => {

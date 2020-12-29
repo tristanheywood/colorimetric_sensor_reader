@@ -30,7 +30,7 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
+    "productName": "Sotcat",
     "appId": "org.erb.ElectronReact",
     "files": [
       "dist/",
@@ -82,7 +82,8 @@
       "output": "release"
     },
     "extraResources": [
-      "./assets/**"
+      "./assets/**",
+      "./sotcat_backend_dist/**"
     ],
     "publish": {
       "provider": "github",
