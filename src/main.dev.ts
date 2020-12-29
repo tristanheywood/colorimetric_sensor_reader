@@ -136,5 +136,5 @@ app.on('ready', () => {
   var subpy = require('child_process').spawn('python', ['./src/sotcat_backend/server.py'])
   subpy.stdout.on('data', (data: any) => {
     console.log(data.toString());
-  })
+  });
 })
