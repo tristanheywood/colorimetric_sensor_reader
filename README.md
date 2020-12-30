@@ -1,3 +1,15 @@
+# Colorimetric Sensor Reader
+
+## Running
+
+Windows Defender may block the exe from running. Open "Windows Security" and go to "Virus & threat protection". Under protection history find "Threat removed" or "Threat blocked", with the affected item listed as `C:\Users\YourName\AppData\Local\Programs\electron-react-boilerplate\resources\sotcat_backend_dist\server\server.exe`. Allow this exe to run. 
+
+## Build and Run
+
+Run `build_python_dist.ps1` to freeze the Python backend into a standalone executable.
+
+Run `build_release.ps1` to create the exe in the `release` folder. This executable will run the Reader without needing to install any other dependencies.
+
 <img src=".erb/img/erb-banner.png" width="100%" />
 
 <br>

@@ -52,6 +52,7 @@ const installExtensions = async () => {
 };
 
 const createWindow = async () => {
+  log.warn("Running createWindow() method");
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
@@ -137,27 +138,28 @@ app.on('ready', () => {
   path.join(process.resourcesPath, 'sotcat_backend_dist') : path.join(__dirname, '..', 'sotcat_backend_dist');
 
   // let fullPath = path.join(__dirname, '..',  'sotcat_backend_dist');
-  console.log("Looking for packaged backend at: ", backendDistPath);
+  log.warn("Looking for packaged backend at: ", backendDistPath);
   let backendIsPackaged = require('fs').existsSync(backendDistPath);
 
   if (!backendIsPackaged) {
-    console.log("No packaged backend detected, attempting to run python backend server");
+    log.warn("No packaged backend detected, attempting to run python backend server");
 
     var subpy = require('child_process').spawn('python', ['./src/sotcat_backend/server.py'])
 
     subpy.stdout.on('data', (data: any) => {
-      console.log(data.toString());
+      log.warn(data.toString());
     });
 
   } else {
-    console.log("Running packaged backend server");
+    log.warn("Running packaged backend server");
 
     let scriptPath = path.join(backendDistPath, 'server', 'server.exe');
-    console.log('Executing script: ', scriptPath);
-    let subpy = require('child_process').execFile(scriptPath);
+    log.warn('Executing script: ', scriptPath);
+    var subpy = require('child_process').exec(scriptPath);
 
-    subpy.stdout.on('data', (data: any) => {
-      console.log(data.toString());
+    subpy.stdout.setEncoding('utf8')
+    subpy.stdout.on('data', function(data: any) {
+      log.warn(data.toString());
     });
   }
 

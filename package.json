@@ -30,7 +30,7 @@
     ]
   },
   "build": {
-    "productName": "Sotcat",
+    "productName": "Colorimetric Sensor Reader",
     "appId": "org.erb.ElectronReact",
     "files": [
       "dist/",
