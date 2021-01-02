@@ -2,9 +2,24 @@
 
 ## Running
 
-Windows Defender may block the exe from running. Open "Windows Security" and go to "Virus & threat protection". Under protection history find "Threat removed" or "Threat blocked", with the affected item listed as `C:\Users\YourName\AppData\Local\Programs\electron-react-boilerplate\resources\sotcat_backend_dist\server\server.exe`. Allow this exe to run. 
+Windows Defender may block the exe from running. Open "Windows Security" and go to "Virus & threat protection". Under protection history find "Threat removed" or "Threat blocked", with the affected item listed as `C:\Users\YourName\AppData\Local\Programs\electron-react-boilerplate\resources\sotcat_backend_dist\server\server.exe`. Allow this exe to run.
 
 ## Build and Run
+
+### Install
+
+```
+pip install -r src/sotcat_backend/requirements.txt
+yarn
+```
+
+### Run in dev mode
+
+```
+yarn start
+```
+
+### Build and run release mode
 
 Run `build_python_dist.ps1` to freeze the Python backend into a standalone executable.
 
