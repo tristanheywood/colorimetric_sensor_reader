@@ -24,5 +24,6 @@
     "test/**/__snapshots__": true,
     "yarn.lock": true,
     "*.{css,sass,scss}.d.ts": true
-  }
+  },
+  "python.pythonPath": "C:\\Users\\trist\\miniconda3\\envs\\py37\\python.exe"
 }
