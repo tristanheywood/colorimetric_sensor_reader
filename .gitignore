@@ -54,3 +54,5 @@ __pycache__/
 build
 server.spec
 data/20201209_20mM,1-1, 24h drying, 3m UV/
+
+.vscode/*
