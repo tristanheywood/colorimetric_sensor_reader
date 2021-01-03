@@ -160,6 +160,8 @@ app.on('ready', () => {
         print(data.toString());
       });
 
+      process.on('exit', () => subpy.kill());
+
     } else {
       print("Running packaged backend server");
 
@@ -171,6 +173,8 @@ app.on('ready', () => {
       subpy.stdout.on('data', function(data: any) {
         print(data.toString());
       });
+
+      process.on('exit', () => subpy.kill());
     }
   }
 
@@ -185,15 +189,16 @@ app.on('ready', () => {
       // delay to let websocket connect
       setTimeout(() => {
         if (pythonWS.readyState != WebSocket.CONNECTED) {
-          print('Error: failed to connect to Python websocket');
+          print('Error: failed to connect to Python websocket in 5s');
         }
-      })
-    }, 0.1);
+      }, 0.1)
+    }, 5);
   }
 
 
   setTimeout(() => {
-    if (pythonWS.readyState == WebSocket.CLOSED) {
+    if (pythonWS.readyState != WebSocket.CONNECTED) {
+      print('python WS in state: ', pythonWS.readyState);
       print('no Python server detected after 0.1 seconds, starting one...');
 
       start_python_server();
