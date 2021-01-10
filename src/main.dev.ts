@@ -99,6 +99,7 @@ class NodeServer {
       print('Python server not detected, starting one...');
       await this.start_python_server();
       await this._sleep(5000);
+      this.init_pythonWS();
       if (! await this.python_ws_is_connected()) {
         print('Failed to connect to python WS');
       }
