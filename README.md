@@ -13,6 +13,15 @@ pip install -r src/sotcat_backend/requirements.txt
 yarn
 ```
 
+### Protobuf install
+
+Install chocolately
+``` 
+choco install protoc
+conda install protobuf
+```
+
+
 ### Run in dev mode
 
 ```
