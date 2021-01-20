@@ -1,6 +1,6 @@
 # Colorimetric Sensor Reader
 
-*Built using https://github.com/electron-react-boilerplate/electron-react-boilerplate*
+*Built on the template: https://github.com/electron-react-boilerplate/electron-react-boilerplate*
 
 ## Running the prebuilt .exe
 
