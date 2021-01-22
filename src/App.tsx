@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import icon from '../assets/icon.svg';
-import Sotcat from './sotcat_frontend/Sotcat';
+import SotcatContainer from './sotcat_frontend/Sotcat';
 
 const Hello = () => {
   return (
@@ -37,7 +37,7 @@ const Hello = () => {
     //     </a>
     //   </div>
     // </div>
-      <Sotcat/>
+      <SotcatContainer/>
   );
 };
 
