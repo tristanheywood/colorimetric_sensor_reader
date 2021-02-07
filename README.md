@@ -1,6 +1,10 @@
 # Colorimetric Sensor Reader
 
-*Built on the template: https://github.com/electron-react-boilerplate/electron-react-boilerplate*
+A GUI application to read, and compute statistics from, colorimetric sensors. Developed to support a PhD project on inexpensive cancer detection through analysis of certain compounds in exhaled breath - using a colorimetric sensor.
+
+*Built from HTML/CSS, Typescript, React, Electron and Node, using the template: https://github.com/electron-react-boilerplate/electron-react-boilerplate*
+
+**Download the sensor reader:** https://github.com/tristanheywood/colorimetric_sensor_reader/releases/download/v1.0.0/Colorimetric.Sensor.Reader.Setup.1.0.0.exe
 
 ## Running the prebuilt .exe
 
