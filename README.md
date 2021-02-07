@@ -11,7 +11,7 @@ A GUI application to read, and compute statistics from, colorimetric sensors. De
 
 ## Note: Antivirus Software
 
-This application uses [PyInstaller](https://www.pyinstaller.org/) to build a standalone .exe file. This can offen trigger antivirus false positives. This is a known issue: 
+This application uses [PyInstaller](https://www.pyinstaller.org/) to build a standalone .exe file. This can offten trigger antivirus false positives. This is a known issue: 
 https://github.com/pyinstaller/pyinstaller/issues/603. 
 
 If this happens you will need to manually allow the application to run:
