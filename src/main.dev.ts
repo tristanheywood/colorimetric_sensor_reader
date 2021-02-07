@@ -15,6 +15,7 @@ import { app, BrowserWindow, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+import { ChildProcess } from 'child_process';
 
 const WebSocket = require('ws');
 
@@ -23,9 +24,12 @@ function print(...args: any[]) {
   // console.log(...args);
 }
 
+
 class NodeServer {
 
   pythonWS?: WebSocket
+  pythonServerPID?: number
+  pythonServerProcess?: ChildProcess
 
   _sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -79,8 +83,11 @@ class NodeServer {
       print("Running packaged backend server");
 
       let scriptPath = path.join(backendDistPath, 'server', 'server.exe');
-      print('Executing script: ', scriptPath);
-      var subpy = require('child_process').exec(scriptPath);
+      print('Starting EXE: ', scriptPath);
+      // var subpy = require('child_process').exec(scriptPath);
+      var subpy = require('child_process').spawn(scriptPath);
+      this.pythonServerPID = subpy.pid;
+      this.pythonServerProcess = subpy;
 
       subpy.stdout.setEncoding('utf8')
       subpy.stdout.on('data', function(data: any) {
@@ -105,6 +112,18 @@ class NodeServer {
       }
     } else {
       print('Existing Python server found, using');
+    }
+  }
+
+  maybe_kill_python_server() {
+    if (this.pythonServerPID != undefined) {
+      print("Attempting to kill python server process with PID:", this.pythonServerPID);
+      this.pythonServerProcess?.kill();
+      let subKill = require('child_process').spawn("taskkill", ["/pid", this.pythonServerPID, '/T', '/F']);
+      // print(subKill);
+      subKill.stdout.on('data', (data: any) => {
+        print("subKill: ", data)
+      });
     }
   }
 }
@@ -193,6 +212,7 @@ const createWindow = async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+    nodeServer.maybe_kill_python_server();
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);

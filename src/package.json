@@ -1,13 +1,13 @@
 {
-  "name": "electron-react-boilerplate",
-  "productName": "electron-react-boilerplate",
-  "version": "2.0.1",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "name": "colorimetric-sensor-reader",
+  "productName": "Colorimetric Sensor Reader",
+  "version": "1.0.0",
+  "description": "A GUI application to read, and compute statistics from, colorimetric sensors.",
   "main": "./main.prod.js",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://github.com/electron-react-boilerplate"
+    "name": "Tristan Heywood",
+    "email": "tristanheywood@hotmail.com",
+    "url": "https://github.com/tristanheywood/colorimetric_sensor_reader"
   },
   "scripts": {
     "electron-rebuild": "node -r ../.erb/scripts/BabelRegister.js ../.erb/scripts/ElectronRebuild.js",

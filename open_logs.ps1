@@ -1,1 +1,1 @@
-code $HOME\AppData\Roaming\electron-react-boilerplate\logs\main.log
+code $HOME\AppData\Roaming\Colorimetric Sensor Reader\logs\main.log
