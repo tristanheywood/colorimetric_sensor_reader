@@ -4,6 +4,8 @@ A GUI application to read, and compute statistics from, colorimetric sensors. De
 
 *Built from HTML/CSS, Typescript, React, Electron and Node, using the template: https://github.com/electron-react-boilerplate/electron-react-boilerplate*
 
+## Download the sensor reader: https://github.com/tristanheywood/colorimetric_sensor_reader/releases/download/v1.0.0/Colorimetric.Sensor.Reader.Setup.1.0.0.exe
+
 ## Running the prebuilt .exe
 
 Windows Defender may block the exe from running. Open "Windows Security" and go to "Virus & threat protection". Under protection history find "Threat removed" or "Threat blocked", with the affected item listed as `C:\Users\YourName\AppData\Local\Programs\electron-react-boilerplate\resources\sotcat_backend_dist\server\server.exe`. Allow this exe to run.
