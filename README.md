@@ -4,13 +4,7 @@ A GUI application to read, and compute statistics from, colorimetric sensors. De
 
 *Built from HTML/CSS, Typescript, React, Electron and Node, using the template: https://github.com/electron-react-boilerplate/electron-react-boilerplate*
 
-<!-- blank line -->
-<figure class="video_container">
-  <video controls="true" allowfullscreen="true">
-    <source src="media/reader_demo.mp4" type="video/mp4">
-  </video>
-</figure>
-<!-- blank line -->
+![Colorimetric Sensor Reader - Animated Demo](media/reader_demo.mp4)
 
 **Download the sensor reader:** https://github.com/tristanheywood/colorimetric_sensor_reader/releases/download/v1.0.0/Colorimetric.Sensor.Reader.Setup.1.0.0.exe
 
