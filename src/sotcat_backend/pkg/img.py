@@ -553,6 +553,13 @@ class ImageSession:
                 self.blotchCircles.pop(idx)
                 return
 
+    def get_bloch_by_id(self, id: int) -> BlotchCircle:
+
+      for idx, bc in enumerate(self.blotchCircles):
+        if bc.id == id:
+          return bc
+
+
     def get_clipboard_str(self, cols: ClipboardViewColumns) -> str:
       return '\n'.join(bc.get_clipboard_str(cols) for bc in self.blotchCircles)
 

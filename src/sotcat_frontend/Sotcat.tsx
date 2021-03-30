@@ -36,6 +36,9 @@ class SotcatContainer extends React.Component<{}, {uiState: UIState}> {
     }
     fetchProm.then((res: Response) => {
       console.log(res);
+      if (res.status != 200) {
+        throw new Error("Server did not return 200");
+      }
       return res.arrayBuffer()
     }).then((buff: ArrayBuffer) => {
       let uiState = UIState.deserializeBinary(buff as Uint8Array);
@@ -44,6 +47,7 @@ class SotcatContainer extends React.Component<{}, {uiState: UIState}> {
         uiState: uiState
       });
     })
+    .catch(error => console.log(error));
   }
 }
 
@@ -393,7 +397,7 @@ type ClipboardViewProps = {
   content: ClipboardContent;
   cbCols: ClipboardViewColumns;
   baseURL: string;
-  request: (url: string) => void;
+  request: (url: string, body?: any) => void;
 }
 
 class ClipboardView extends React.Component<ClipboardViewProps, {}> {
@@ -466,7 +470,23 @@ class ClipboardView extends React.Component<ClipboardViewProps, {}> {
                   }}/>
                 </td>
               ].concat(this.props.cbCols.getName() ? [
-                this._render_td("", true)
+                this._render_td(
+                <textarea
+                  rows={1}
+                  cols={5}
+                  onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+                    let newName: string = event.target.value;
+                    this.props.request(this.props.baseURL + `/set_pick_name/${this.props.content.getBlotchidsList()[idx]}/${newName}`);
+                  }}
+                  // value={row.getPickname()}
+                  style = {{
+                    backgroundColor: "dimgray",
+                    color: "white",
+                    fontWeight: "bold",
+                  }}
+                >{row.getPickname()}</textarea>,
+                  true
+                )
               ] : []).concat(this.props.cbCols.getMurgb() ? [
                 this._render_td(row.getMur().toFixed(2), false),
                 this._render_td(row.getMug().toFixed(2), false),
@@ -548,7 +568,7 @@ class ClipboardView extends React.Component<ClipboardViewProps, {}> {
     )
   }
 
-  _render_td(text: string, border: boolean) {
+  _render_td(text: string | JSX.Element, border: boolean) {
     return (
       <td style={{
         textAlign: "center",

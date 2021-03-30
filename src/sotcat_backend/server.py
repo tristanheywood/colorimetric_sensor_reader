@@ -305,6 +305,18 @@ def set_zoom(viewRatio: str, srcRatio: str):
 
   return session.get_UIState_msg().SerializeToString()
 
+@app.route('/set_pick_name/<pickId>/<newName>')
+def set_pick_name(pickId: str, newName: str):
+  pickId = int(pickId)
+
+  global session
+
+  session.currImgSession.get_bloch_by_id(pickId).pickStats.pick_name = newName
+
+  return session.get_UIState_msg().SerializeToString()
+
+
+
 
 
 # thread = threading.Thread(target = run_node_websocket, daemon=True)
