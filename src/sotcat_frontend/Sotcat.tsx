@@ -492,9 +492,9 @@ class ClipboardView extends React.Component<ClipboardViewProps, {}> {
                 this._render_td(row.getMug().toFixed(2), false),
                 this._render_td(row.getMub().toFixed(2), true),
               ] : []).concat(this.props.cbCols.getPercrgb() ? [
-                this._render_td(row.getPercr().toFixed(2), false),
-                this._render_td(row.getPercg().toFixed(2), false),
-                this._render_td(row.getPercb().toFixed(2), true),
+                this._render_td((row.getPercr()*100).toFixed(1), false),
+                this._render_td((row.getPercg()*100).toFixed(1), false),
+                this._render_td((row.getPercb()*100).toFixed(1), true),
               ] : []).concat(this.props.cbCols.getSigmargb() ? [
                 this._render_td(row.getSigmar().toFixed(2), false),
                 this._render_td(row.getSigmag().toFixed(2), false),
