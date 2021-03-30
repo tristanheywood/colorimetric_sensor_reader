@@ -177,10 +177,61 @@ class Sotcat extends React.Component<SotcatProps, SotcatState> {
                 let canvas: HTMLCanvasElement = event.target as HTMLCanvasElement;
 
                 if (this.amDrawingCircle) {
-                  this.amDrawingCircle = false;
-                  // return;
+                  return;
+                  // this.amDrawingCircle = false;
+                  // // return;
 
+                  // let imgScale = this.props.uiState.getActiveimage()?.getZoomratiosrcimg()! / this.props.uiState.getActiveimage()?.getZoomratioviewimg()!;
+
+                  // // let imgScale = this.props.uiState.getActiveimage()?.getDownsamplefactor()!
+
+                  // this.postCircle(
+                  //   {
+                  //     x: this.circleCenter!.x * imgScale,
+                  //     y: this.circleCenter!.y * imgScale,
+                  //   },
+                  //   this.getRadius(this.circleCenter!, this.getMousePosOnCanvas(canvas, event)) * imgScale
+                  // );
+                  // return;
+                }
+
+                document.onmousemove = (moveEvent: MouseEvent) => {
+                  // let canvas: HTMLCanvasElement = event.target as HTMLCanvasElement;
+
+                  if (!this.canvasRef.current) {
+                    return;
+                  }
+
+                  let canvas: HTMLCanvasElement = this.canvasRef.current!;
+
+                  if (!this.amDrawingCircle) {
+                    return;
+                  }
+
+                  let movePointer = this.getMousePosOnCanvas(canvas, moveEvent);
+
+                  let radius = this.getRadius(this.circleCenter!, movePointer);
+
+                  if (radius > 2) {
+                    let ctx = canvas.getContext("2d")!;
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    // ctx.drawImage(this.state.img!, 0, 0, this.state.img!.width * this.imgScale, this.state.img!.height * this.imgScale);
+                    ctx.drawImage(this.imgElement, 0, 0);
+                    this.drawSelection(ctx, this.circleCenter!, radius);
+                  }
+                }
+
+
+                document.onmousedown = (mouseEvent: MouseEvent) => {
                   let imgScale = this.props.uiState.getActiveimage()?.getZoomratiosrcimg()! / this.props.uiState.getActiveimage()?.getZoomratioviewimg()!;
+
+                  // if (!this.canvasRef.current) {
+                  //   return;
+                  // }
+
+                  let canvas: HTMLCanvasElement = this.canvasRef.current!;
+
 
                   // let imgScale = this.props.uiState.getActiveimage()?.getDownsamplefactor()!
 
@@ -191,6 +242,7 @@ class Sotcat extends React.Component<SotcatProps, SotcatState> {
                     },
                     this.getRadius(this.circleCenter!, this.getMousePosOnCanvas(canvas, event)) * imgScale
                   );
+                  document.onmousedown = null;
                   return;
                 }
                 this.amDrawingCircle = true;
@@ -205,24 +257,24 @@ class Sotcat extends React.Component<SotcatProps, SotcatState> {
                 this.drawCircle(ctx, pointer, 5, 'white');
               }}
               onMouseMove={(event) => {
-                let canvas: HTMLCanvasElement = event.target as HTMLCanvasElement;
+                // let canvas: HTMLCanvasElement = event.target as HTMLCanvasElement;
 
-                if (!this.amDrawingCircle) {
-                  return;
-                }
+                // if (!this.amDrawingCircle) {
+                //   return;
+                // }
 
-                let pointer = this.getMousePosOnCanvas(canvas, event);
+                // let pointer = this.getMousePosOnCanvas(canvas, event);
 
-                let radius = this.getRadius(this.circleCenter!, pointer);
+                // let radius = this.getRadius(this.circleCenter!, pointer);
 
-                if (radius > 2) {
-                  let ctx = canvas.getContext("2d")!;
+                // if (radius > 2) {
+                //   let ctx = canvas.getContext("2d")!;
 
-                  ctx.clearRect(0, 0, canvas.width, canvas.height);
-                  // ctx.drawImage(this.state.img!, 0, 0, this.state.img!.width * this.imgScale, this.state.img!.height * this.imgScale);
-                  ctx.drawImage(this.imgElement, 0, 0);
-                  this.drawSelection(ctx, this.circleCenter!, radius);
-                }
+                //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+                //   // ctx.drawImage(this.state.img!, 0, 0, this.state.img!.width * this.imgScale, this.state.img!.height * this.imgScale);
+                //   ctx.drawImage(this.imgElement, 0, 0);
+                //   this.drawSelection(ctx, this.circleCenter!, radius);
+                // }
               }
             }
             style = {{
@@ -321,7 +373,7 @@ class Sotcat extends React.Component<SotcatProps, SotcatState> {
     ctx.stroke();
   }
 
-  getMousePosOnCanvas(canvas: HTMLCanvasElement, event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
+  getMousePosOnCanvas(canvas: HTMLCanvasElement, event: React.MouseEvent<HTMLCanvasElement, MouseEvent> | MouseEvent) {
     let rect = canvas.getBoundingClientRect();
     return {
       x: event.clientX - rect.left,
@@ -722,6 +774,14 @@ type BlotchCircleDispProps = {
 
 class BlotchCircleDisp extends React.Component<BlotchCircleDispProps, {}> {
 
+  dropDivRef: React.RefObject<HTMLDivElement>;
+
+  constructor(props: BlotchCircleDispProps) {
+    super(props);
+
+    this.dropDivRef = React.createRef();
+  }
+
   render() {
     return (
       <div style = {{
@@ -735,7 +795,9 @@ class BlotchCircleDisp extends React.Component<BlotchCircleDispProps, {}> {
         boxShadow: BOX_SHADOW_STR,
         border: "1px solid rgba(0, 0, 0, 0.2)",
         minHeight: 100,
-      }}>
+      }}
+        ref = {this.dropDivRef}
+      >
         {this.props.blotches.map((rb: ReadBlotch) => {
           return (<Drop
             baseURL = {this.props.baseURL}
@@ -745,6 +807,10 @@ class BlotchCircleDisp extends React.Component<BlotchCircleDispProps, {}> {
         })}
       </div>
     )
+  }
+
+  componentDidUpdate() {
+    this.dropDivRef.current!.scrollLeft = this.dropDivRef.current!.scrollWidth;
   }
 }
 
