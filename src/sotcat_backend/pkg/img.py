@@ -495,7 +495,7 @@ class BlotchCircle:
         str(x) for x in (
           ([pc.pick_name] if cols.name else []) +
           ([pc.mu_r ,pc.mu_g, pc.mu_b] if cols.mu_r_g_b else []) +
-          ([pc.perc_r, pc.perc_g, pc.perc_b] if cols.perc_r_g_b else [])+
+          ([pc.perc_r*100, pc.perc_g*100, pc.perc_b*100] if cols.perc_r_g_b else [])+
           ([pc.sigma_r, pc.sigma_g, pc.sigma_b] if cols.sigma_r_g_b else []) +
           ([pc.num_pixels] if cols.num_pixels else [])
           )

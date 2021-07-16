@@ -313,6 +313,8 @@ def set_pick_name(pickId: str, newName: str):
 
   session.currImgSession.get_bloch_by_id(pickId).pickStats.pick_name = newName
 
+  pyperclip.copy(session.get_clipboard_str())
+
   return session.get_UIState_msg().SerializeToString()
 
 
