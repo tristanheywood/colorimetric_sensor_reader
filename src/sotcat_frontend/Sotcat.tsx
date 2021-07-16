@@ -483,6 +483,7 @@ class ClipboardView extends React.Component<ClipboardViewProps, {}> {
                     backgroundColor: "dimgray",
                     color: "white",
                     fontWeight: "bold",
+                    width: "90%",
                   }}
                 >{row.getPickname()}</textarea>,
                   true
