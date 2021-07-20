@@ -145,7 +145,7 @@ def do_open_folder():
 
     global session
     session.set_imgFolder(ImageFolder.from_gui_folder_selection())
-    session.imgFolder.register_images_on_session(session)
+    # session.imgFolder.register_images_on_session(session)
     session.set_currImgSession(ImageSession(session.imgFolder.images[0]))
 
     uiState = session.get_UIState_msg()
@@ -177,6 +177,23 @@ def do_get_selected_scan():
     return session.get_UIState_msg().SerializeToString()
 
     # return {'imgData': session.currImgSession.image.to_b64_png()}
+
+@app.route('/set_clipboard_cols', methods=['POST'])
+def set_clipboard_cols():
+
+  body = request.get_data()
+  log('clipboard cols body', body)
+
+  cvc = ClipboardViewColumns.FromString(body)
+
+  log('/set_clipboard_cols', cvc.to_dict())
+
+  global session
+  session.selectedClipboardCols = cvc
+
+  pyperclip.copy(session.get_clipboard_str())
+
+  return session.get_UIState_msg().SerializeToString()
 
 @app.route('/new_circle', methods=['POST'])
 def do_new_circle():
@@ -220,7 +237,7 @@ def do_new_circle():
     # compare64 = base64.b64encode(comparePNG).decode('ascii')
 
     imgSess.add_circle(cr, cc, r)
-    imgSess.blotchCircles[-1].register_imgs_on_session(session)
+    # imgSess.blotchCircles[-1].register_imgs_on_session(session)
 
     # global colours
     # colours.append([int(x) for x in colour])
@@ -233,7 +250,8 @@ def do_new_circle():
     #     clipboard
     # )
 
-    pyperclip.copy(imgSess.get_clipboard_str())
+    # pyperclip.copy(imgSess.get_clipboard_str())
+    pyperclip.copy(session.get_clipboard_str())
 
     # return {
     #     "circContext": img64,
@@ -271,9 +289,36 @@ def remove_blotch(blotchId):
   global session
   session.currImgSession.remove_blotch(int(blotchId))
 
-  pyperclip.copy(session.currImgSession.get_clipboard_str())
+  pyperclip.copy(session.get_clipboard_str())
 
   return session.get_UIState_msg().SerializeToString()
+
+@app.route('/set_zoom/<viewRatio>/<srcRatio>')
+def set_zoom(viewRatio: str, srcRatio: str):
+  viewRatio = int(viewRatio)
+  srcRatio = int(srcRatio)
+
+  log(f'Client requested zoom of {viewRatio}:{srcRatio} (viewRatio:srcRatio)')
+
+  global session
+  session.set_img_zoom(viewRatio, srcRatio)
+
+  return session.get_UIState_msg().SerializeToString()
+
+@app.route('/set_pick_name/<pickId>/<newName>')
+def set_pick_name(pickId: str, newName: str):
+  pickId = int(pickId)
+
+  global session
+
+  session.currImgSession.get_bloch_by_id(pickId).pickStats.pick_name = newName
+
+  pyperclip.copy(session.get_clipboard_str())
+
+  return session.get_UIState_msg().SerializeToString()
+
+
+
 
 
 # thread = threading.Thread(target = run_node_websocket, daemon=True)

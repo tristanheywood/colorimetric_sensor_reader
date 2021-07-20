@@ -1,5 +1,5 @@
 import React from 'react';
-import { PickedCircle, ClipboardContent, PickStats, UIState, FolderImage, ActiveImage, ReadBlotch } from './protobuf_js/types_pb'
+import { PickedCircle, ClipboardContent, PickStats, UIState, FolderImage, ActiveImage, ReadBlotch, ClipboardViewColumns } from './protobuf_js/types_pb'
 
 let BOX_SHADOW_STR: string = "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)";
 
@@ -36,6 +36,9 @@ class SotcatContainer extends React.Component<{}, {uiState: UIState}> {
     }
     fetchProm.then((res: Response) => {
       console.log(res);
+      if (res.status != 200) {
+        throw new Error("Server did not return 200");
+      }
       return res.arrayBuffer()
     }).then((buff: ArrayBuffer) => {
       let uiState = UIState.deserializeBinary(buff as Uint8Array);
@@ -44,6 +47,7 @@ class SotcatContainer extends React.Component<{}, {uiState: UIState}> {
         uiState: uiState
       });
     })
+    .catch(error => console.log(error));
   }
 }
 
@@ -132,6 +136,22 @@ class Sotcat extends React.Component<SotcatProps, SotcatState> {
           request = {this.props.request}
           baseURL = {this.props.baseURL}
         />
+        <div style = {{
+          boxShadow: BOX_SHADOW_STR,
+          borderRadius: 5,
+          minHeight: 30,
+          display: "flex",
+          margin: 3,
+          marginTop: 5,
+          marginBottom: 5,
+        }}>
+          <CSRMenu
+            acImg = {this.props.uiState.getActiveimage()!}
+            cbCols = {this.props.uiState.getClipboardviewcolumns()!}
+            request = {this.props.request}
+            baseURL = {this.props.baseURL}
+          />
+        </div>
         <div
           style={{
             display: "flex",
@@ -142,7 +162,11 @@ class Sotcat extends React.Component<SotcatProps, SotcatState> {
             margin: 3,
           }}
         >
-            <canvas
+
+          <div style={{
+            display: "inline-block",
+          }}>
+          <canvas
               id="canvas"
               // width={(this.state.img && this.state.img!.width * this.imgScale) || "1600"}
               // height={(this.state.img && this.state.img!.height * this.imgScale) || "1000"}
@@ -156,7 +180,9 @@ class Sotcat extends React.Component<SotcatProps, SotcatState> {
                   this.amDrawingCircle = false;
                   // return;
 
-                  let imgScale = this.props.uiState.getActiveimage()?.getDownsamplefactor()!
+                  let imgScale = this.props.uiState.getActiveimage()?.getZoomratiosrcimg()! / this.props.uiState.getActiveimage()?.getZoomratioviewimg()!;
+
+                  // let imgScale = this.props.uiState.getActiveimage()?.getDownsamplefactor()!
 
                   this.postCircle(
                     {
@@ -210,11 +236,13 @@ class Sotcat extends React.Component<SotcatProps, SotcatState> {
             >
               {/* <img src = {this.props.baseURL + '/image_bytes/' + this.props.uiState.getActiveimage()?.getImgdatavfn()}/> */}
             </canvas>
-                  <div style={{
+          </div>
+        <div style={{
           display: "flex",
         }}>
           <ClipboardView
             content={this.props.uiState.getClipboardcontent() || new ClipboardContent()}
+            cbCols={this.props.uiState.getClipboardviewcolumns() || new ClipboardViewColumns()}
             baseURL = {this.props.baseURL}
             request = {this.props.request}
           />
@@ -367,8 +395,9 @@ class Drop extends React.Component<DropProps, DropState> {
 
 type ClipboardViewProps = {
   content: ClipboardContent;
+  cbCols: ClipboardViewColumns;
   baseURL: string;
-  request: (url: string) => void;
+  request: (url: string, body?: any) => void;
 }
 
 class ClipboardView extends React.Component<ClipboardViewProps, {}> {
@@ -379,15 +408,6 @@ class ClipboardView extends React.Component<ClipboardViewProps, {}> {
   };
 
   render() {
-    // console.log(this.props.content.getRowsList().map(row => {
-    //   <tr>
-    //     {row.split("\t").map(elt => {
-    //       <td>
-    //         {elt}
-    //       </td>
-    //     })}
-    //   </tr>
-    // }));
     return (
       <table style = {{
         boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
@@ -401,7 +421,7 @@ class ClipboardView extends React.Component<ClipboardViewProps, {}> {
           borderRadius: 5,
         }}>
           <tr style = {this.trStyle}>
-            {["🎨", "μR", "μG", "μB","%R", "%G", "%B", "σR", "σG", "σB", "➖"].map((header, idx) => {
+            {/* {["🎨", "μR", "μG", "μB","%R", "%G", "%B", "σR", "σG", "σB", "px", "➖"].map((header, idx) => {
               console.log(idx, idx % 3 == 1);
               return (
               <th style = {{
@@ -410,7 +430,28 @@ class ClipboardView extends React.Component<ClipboardViewProps, {}> {
                 borderRight: idx % 3 == 0 ? "1px solid rgba(0, 0, 0, 0.2)" : undefined
               }}>{header}</th>
               );
-            })}
+            })} */}
+            {[
+              this._render_th("🎨", true)
+            ].concat(this.props.cbCols.getName() ? [
+              this._render_th("ID", true)
+            ] : []).concat(this.props.cbCols.getMurgb() ? [
+              this._render_th("μR", false),
+              this._render_th("μG", false),
+              this._render_th("μB", true),
+            ] : []).concat(this.props.cbCols.getPercrgb() ? [
+              this._render_th("%R", false),
+              this._render_th("%G", false),
+              this._render_th("%B", true),
+            ] : []).concat(this.props.cbCols.getSigmargb() ? [
+              this._render_th("σR", false),
+              this._render_th("σG", false),
+              this._render_th("σB", true),
+            ] : []).concat(this.props.cbCols.getNumpixels() ? [
+              this._render_th("px", true),
+            ] : []).concat([
+              this._render_th("➖", false)
+            ])}
           </tr>
         </thead>
         <tbody>
@@ -428,15 +469,49 @@ class ClipboardView extends React.Component<ClipboardViewProps, {}> {
                     borderRadius: 2,
                   }}/>
                 </td>
-              ].concat([row.getMur(), row.getMug(), row.getMub(), row.getPercr(), row.getPercg(), row.getPercb(), row.getSigmar(), row.getSigmag(), row.getSigmab()].map((elt, idx) =>
-                <td style={{
-                  textAlign: "center",
-                  borderRight: idx % 3 == 2 ? "1px solid rgba(0, 0, 0, 0.2)" : undefined,
-                  fontSize: "8pt",
-                }}>
-                  {elt.toFixed(2)}
-                </td>
-              )).concat([
+              ].concat(this.props.cbCols.getName() ? [
+                this._render_td(
+                <textarea
+                  rows={1}
+                  cols={5}
+                  onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+                    let newName: string = event.target.value;
+                    this.props.request(this.props.baseURL + `/set_pick_name/${this.props.content.getBlotchidsList()[idx]}/${newName}`);
+                  }}
+                  // value={row.getPickname()}
+                  style = {{
+                    backgroundColor: "dimgray",
+                    color: "white",
+                    fontWeight: "bold",
+                    width: "90%",
+                  }}
+                >{row.getPickname()}</textarea>,
+                  true
+                )
+              ] : []).concat(this.props.cbCols.getMurgb() ? [
+                this._render_td(row.getMur().toFixed(2), false),
+                this._render_td(row.getMug().toFixed(2), false),
+                this._render_td(row.getMub().toFixed(2), true),
+              ] : []).concat(this.props.cbCols.getPercrgb() ? [
+                this._render_td((row.getPercr()*100).toFixed(1), false),
+                this._render_td((row.getPercg()*100).toFixed(1), false),
+                this._render_td((row.getPercb()*100).toFixed(1), true),
+              ] : []).concat(this.props.cbCols.getSigmargb() ? [
+                this._render_td(row.getSigmar().toFixed(2), false),
+                this._render_td(row.getSigmag().toFixed(2), false),
+                this._render_td(row.getSigmab().toFixed(2), true),
+              ] : []).concat(this.props.cbCols.getNumpixels() ? [
+                this._render_td(row.getNumpixels().toString(), true),
+              ] : [])
+              // .concat([row.getMur(), row.getMug(), row.getMub(), row.getPercr(), row.getPercg(), row.getPercb(), row.getSigmar(), row.getSigmag(), row.getSigmab(), row.getNumpixels()].map((elt, idx) =>
+              //   <td style={{
+              //     textAlign: "center",
+              //     borderRight: idx % 3 == 2 ? "1px solid rgba(0, 0, 0, 0.2)" : undefined,
+              //     fontSize: "8pt",
+              //   }}>
+              //     {elt.toFixed(2)}
+              //   </td>
+              .concat([
                 <td style = {{
                   // overflow: 'hidden',
                   justifyContent: "center",
@@ -481,6 +556,35 @@ class ClipboardView extends React.Component<ClipboardViewProps, {}> {
       </table>
     )
   }
+
+  _render_th(name: string, border: boolean) {
+    return (
+      <th
+        style = {{
+          textAlign: "center",
+          width: 40,
+          borderRight: border ? "1px solid rgba(0, 0, 0, 0.2)" : undefined,
+        }}
+      >{name}</th>
+    )
+  }
+
+  _render_td(text: string | JSX.Element, border: boolean) {
+    return (
+      <td style={{
+        textAlign: "center",
+        borderRight: border ? "1px solid rgba(0, 0, 0, 0.2)" : undefined,
+        fontSize: "8pt",
+      }}>
+        {text}
+      </td>
+    )
+  }
+
+  _render_mu() {
+
+  }
+
 }
 
 type ScanViewerProps = {
@@ -643,7 +747,168 @@ class BlotchCircleDisp extends React.Component<BlotchCircleDispProps, {}> {
       </div>
     )
   }
+}
 
+type CSRMenuProps = {
+  acImg: ActiveImage,
+  cbCols: ClipboardViewColumns,
+  request: (url: string, body?: any) => void,
+  baseURL: string,
+};
+
+class CSRMenu extends React.Component<CSRMenuProps, {}> {
+
+  // SCALE_MARKS: Array<number> = [1/8, 1/4, 1/2, 1, 2, 4, 8];
+  // marks: Array<any>;
+
+  ZOOM_RATIO_VIEW_TO_SRC: Array<Array<number>> = [[1, 16], [1, 8], [1, 4], [1, 2], [1, 1], [2, 1], [4, 1], [8, 1]]
+
+  constructor(props: CSRMenuProps) {
+    super(props);
+
+    // this.marks = this.SCALE_MARKS.map(elt => {
+    //   return {
+    //     value: elt,
+    //     label: elt.toString(),
+    //   }
+    // })
+  }
+
+  _get_idx_of_ratio(viewRatio: number, srcRatio: number) {
+    let idx = -1;
+    this.ZOOM_RATIO_VIEW_TO_SRC.forEach(
+      (elt, i) => {
+        if (elt[0] == viewRatio && elt[1] == srcRatio) {
+          idx = i;
+        }
+      }
+    );
+    return idx;
+  }
+
+  render() {
+    if (this.props.acImg == undefined) {
+      return (<div></div>)
+    }
+    return (
+      <div style = {{
+        display: "flex",
+        flexDirection: "row",
+      }}>
+        <div style = {{
+          height: "100%",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+        }}>
+          <label
+              htmlFor ="zoom"
+              style = {{
+                marginLeft: 5,
+                marginRight: 3,
+              }}
+            >Zoom: </label>
+            <input
+              type="range" id="zoom" name="zoom"
+              min="0" max = {this.ZOOM_RATIO_VIEW_TO_SRC.length-1}
+              value = {
+                this._get_idx_of_ratio(this.props.acImg.getZoomratioviewimg(), this.props.acImg.getZoomratiosrcimg())
+              }
+              style = {{
+                marginLeft: 5,
+              }}
+              width = {150}
+              onChange = {(event: React.ChangeEvent<HTMLInputElement>) => {
+                // console.log(event);
+                console.log(event.target.value);
+
+                let ratio = this.ZOOM_RATIO_VIEW_TO_SRC[event.target.value as unknown as number];
+
+                let viewRatio = ratio[0];
+                let srcRatio = ratio[1];
+                this.props.request(this.props.baseURL + `/set_zoom/${viewRatio}/${srcRatio}`)
+              }}
+            ></input>
+            <span style = {{
+              marginLeft: 5,
+            }}>
+              {`${this.props.acImg.getZoomratioviewimg()!}:${this.props.acImg.getZoomratiosrcimg()}`}
+            </span>
+        </div>
+        <div style = {{
+          marginLeft: 20,
+          borderLeft: "1px solid rgba(0, 0, 0, 0.2)",
+          paddingLeft: 20,
+        }}>
+            <span style = {{
+              marginRight: 10,
+            }}>
+              Columns:
+            </span>
+            {[
+              this._render_column_toggle(
+                'ID',  this._sel_cols().getName(),
+                (cols: ClipboardViewColumns, val: boolean) => cols.setName(val)
+              ),
+              this._render_column_toggle(
+                'μRGB',  this._sel_cols().getMurgb(),
+                (cols: ClipboardViewColumns, val: boolean) => cols.setMurgb(val)
+              ),
+              this._render_column_toggle(
+                '%RGB', this._sel_cols().getPercrgb(),
+                (cols: ClipboardViewColumns, val: boolean) => cols.setPercrgb(val)
+              ),
+              this._render_column_toggle(
+                'σRGB', this._sel_cols().getSigmargb(),
+                (cols: ClipboardViewColumns, val: boolean) => cols.setSigmargb(val)
+              ),
+              this._render_column_toggle(
+                '#PX', this._sel_cols().getNumpixels(),
+                (cols: ClipboardViewColumns, val: boolean) => cols.setNumpixels(val)
+              ),
+            ]}
+        </div>
+      </div>
+    )
+  }
+
+  _render_column_toggle(text: string, selected: boolean, colsModifyer: (cols: ClipboardViewColumns, val: boolean) => void) {
+    return (
+      <button style = {{
+        backgroundColor: selected ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.1)",
+        fontSize: "1em",
+        color: selected ? "white" : "rgb(200, 200, 200)",
+        borderRadius: 3,
+        height: "100%",
+        fontWeight: "bold",
+        border: selected ? "1px solid rgba(255, 255, 255, 0.3)" : "1px solid rgba(255, 255, 255, 0.2)",
+        marginLeft: 2,
+        marginRight: 2,
+      }}
+        onClick = {() => {
+          this._toggle_column(colsModifyer, !selected);
+        }}
+      >
+        {text}
+      </button>
+    )
+  }
+
+  _sel_cols(): ClipboardViewColumns {
+    return this.props.cbCols;
+  }
+
+  _toggle_column(
+    modifyer: (cols: ClipboardViewColumns, val: boolean) => void,
+    val: boolean
+  ) {
+
+    let cvc: ClipboardViewColumns = ClipboardViewColumns.deserializeBinary(this.props.cbCols.serializeBinary());
+
+    modifyer(cvc, val);
+
+    this.props.request(this.props.baseURL + "/set_clipboard_cols", cvc.serializeBinary());
+  }
 }
 
 export default SotcatContainer;
